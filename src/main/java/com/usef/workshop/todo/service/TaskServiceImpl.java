@@ -11,9 +11,15 @@ import com.usef.workshop.todo.repo.CategoryRepository;
 import com.usef.workshop.todo.repo.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
 
+import java.beans.PropertyDescriptor;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -58,14 +64,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task updateByUuid(Task task){
-        if (task.getCategory().getName() == null || task.getCategory().getName().isBlank()) {
-            throw new InvalidTaskException("Category name is required.");
-        }
+    public Task updateByUuid(Task task) {
         Task loadedTask = taskRepository.findByUuid(task.getUuid())
                 .orElseThrow(() -> new TaskNotFoundException(task.getUuid().toString()));
-        task.setId(loadedTask.getId());
-        return taskRepository.save(task);
+
+        // Copy only non-null properties from incoming `task` to `loadedTask`
+        BeanUtils.copyProperties(task, loadedTask, getNullPropertyNames(task));
+
+        return taskRepository.save(loadedTask);
     }
 
     @Override
@@ -105,6 +111,20 @@ public class TaskServiceImpl implements TaskService {
         } catch (IllegalArgumentException e) {
             throw new InvalidTaskException("Invalid UUID format: " + uuidString);
         }
+    }
+
+    private String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+        Set<String> emptyNames = new HashSet<>();
+        for (PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) {
+                emptyNames.add(pd.getName());
+            }
+        }
+        return emptyNames.toArray(new String[0]);
     }
 
 

@@ -9,7 +9,8 @@ import FloatingActionButton from './components/FloatingActionButton';
 import TaskCreationModal from '../../components/ui/TaskCreationModal';
 import FilterSearchPanel from '../../components/ui/FilterSearchPanel';
 import Button from '../../components/ui/Button';
-import TaskService from "../../service/TaskService";
+import TaskService from "../../services/TaskService";
+
 
 const MainTodoDashboard = () => {
   const navigate = useNavigate();
@@ -29,85 +30,6 @@ const MainTodoDashboard = () => {
     tags: []
   });
 
-  // Mock data for initial todos
-  const mockTodos = [
-    {
-      id: 1,
-      title: "Complete project proposal for Q1 2025",
-      description: "Draft and finalize the comprehensive project proposal including budget analysis, timeline, and resource allocation for the upcoming quarter.",
-      completed: false,
-      priority: "high",
-      category: "work",
-      dueDate: "2025-01-25",
-      tags: ["proposal", "deadline", "important"],
-      createdAt: "2025-01-20T10:00:00Z",
-      updatedAt: "2025-01-20T10:00:00Z"
-    },
-    {
-      id: 2,
-      title: "Buy groceries for the week",
-      description: "Pick up fresh vegetables, fruits, dairy products, and pantry essentials from the local supermarket.",
-      completed: false,
-      priority: "medium",
-      category: "personal",
-      dueDate: "2025-01-24",
-      tags: ["shopping", "weekly"],
-      createdAt: "2025-01-20T09:30:00Z",
-      updatedAt: "2025-01-20T09:30:00Z"
-    },
-    {
-      id: 3,
-      title: "Schedule annual health checkup",
-      description: "Book appointment with family doctor for routine health examination and blood work.",
-      completed: true,
-      priority: "medium",
-      category: "health",
-      dueDate: "2025-01-22",
-      tags: ["health", "appointment"],
-      createdAt: "2025-01-19T14:15:00Z",
-      updatedAt: "2025-01-21T16:30:00Z"
-    },
-    {
-      id: 4,
-      title: "Review React documentation updates",
-      description: "Study the latest React 18 features and best practices to stay current with development trends.",
-      completed: false,
-      priority: "low",
-      category: "learning",
-      dueDate: "2025-01-28",
-      tags: ["react", "documentation", "learning"],
-      createdAt: "2025-01-18T11:45:00Z",
-      updatedAt: "2025-01-18T11:45:00Z"
-    },
-    {
-      id: 5,
-      title: "Prepare presentation slides",
-      description: "Create engaging slides for the upcoming team meeting presentation on project milestones and achievements.",
-      completed: false,
-      priority: "urgent",
-      category: "work",
-      dueDate: "2025-01-23",
-      tags: ["presentation", "meeting", "urgent"],
-      createdAt: "2025-01-21T08:20:00Z",
-      updatedAt: "2025-01-21T08:20:00Z"
-    }
-  ];
-
-  // Load todos from localStorage or use mock data
-  useEffect(() => {
-    const savedTodos = localStorage.getItem('todomaster-todos');
-    if (savedTodos) {
-      try {
-        const parsedTodos = JSON.parse(savedTodos);
-        setTodos(parsedTodos);
-      } catch (error) {
-        console.error('Error parsing saved todos:', error);
-        setTodos(mockTodos);
-      }
-    } else {
-      setTodos(mockTodos);
-    }
-  }, []);
 
   // Save todos to localStorage whenever todos change
   useEffect(() => {
@@ -117,7 +39,17 @@ const MainTodoDashboard = () => {
   }, [todos]);
 
   useEffect(() => {
-    TaskService.getAll();
+    const fetchTasks = async () =>{
+      try {
+        const taskList = await TaskService.getAll();
+        setTodos(taskList);
+        console.log(taskList);
+      }catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    }
+
+     fetchTasks()
   }, []);
 
   // Filter and search todos
@@ -289,14 +221,26 @@ const MainTodoDashboard = () => {
     }
   };
 
-  const handleToggleTodo = (id) => {
+  const handleToggleTodo = (uuid) => {
+    const updatedTodo = todos.find(todo => todo.uuid === uuid);
+    if (!updatedTodo) return;
+
+    const toggledTodo = {
+      ...updatedTodo,
+      completed: !updatedTodo.completed,
+      updatedAt: new Date().toISOString(),
+    };
+
     setTodos(prev =>
-      prev.map(todo =>
-        todo.id === id
-          ? { ...todo, completed: !todo.completed, updatedAt: new Date().toISOString() }
-          : todo
-      )
+        prev.map(todo =>
+            todo.uuid === uuid ? toggledTodo : todo
+        )
     );
+
+    TaskService.updateByUuid(toggledTodo)
+        .then(() => console.log('Todo updated on backend'))
+        .catch(err => console.error('Update failed', err));
+
   };
 
   const handleEditTodo = (todo) => {
@@ -304,9 +248,14 @@ const MainTodoDashboard = () => {
     setIsTaskModalOpen(true);
   };
 
-  const handleDeleteTodo = (id) => {
+  const handleDeleteTodo = async (uuid) =>  {
     if (window.confirm('Are you sure you want to delete this task?')) {
-      setTodos(prev => prev.filter(todo => todo.id !== id));
+      try {
+        await TaskService.deleteByUuid(uuid);
+        setTodos(prevTodos => prevTodos.filter(todo => todo.uuid !== uuid));
+      } catch (error) {
+        console.error("Error deleting task:", error);
+      }
     }
   };
 
@@ -349,8 +298,14 @@ const MainTodoDashboard = () => {
     setIsTaskModalOpen(true);
   };
 
-  const handleCloseTaskModal = () => {
+  const handleCloseTaskModal = async () => {
     setIsTaskModalOpen(false);
+    try {
+      const tasks = await TaskService.getAll();
+      setTodos(tasks);
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
     setEditingTask(null);
   };
 

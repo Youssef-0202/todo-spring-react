@@ -16,6 +16,7 @@ public record TaskDTO(
         String description,
         String priority,
         String categoryName,
+        Boolean completed,
         String status,
         LocalDate dueDate,
         LocalDateTime reminderDateTime,

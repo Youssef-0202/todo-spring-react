@@ -24,6 +24,7 @@ public class TaskMapper {
 
     public TaskDTO mapToDTO(Task task) {
         return TaskDTO.builder()
+                .completed(task.getCompleted())
                 .title(task.getTitle())
                 .uuid(task.getUuid() != null ? task.getUuid().toString() : null)
                 .description(task.getDescription())
@@ -50,6 +51,12 @@ public class TaskMapper {
         if (dto.uuid() != null && !dto.uuid().isBlank()) {
             task.setUuid(UUID.fromString(dto.uuid()));
         }
+        if (dto.completed() != null){
+            task.setCompleted(dto.completed());
+        }else {
+            task.setCompleted(false);
+        }
+
         task.setTitle(dto.title());
         task.setDescription(dto.description());
         task.setPriority(dto.priority() != null ? Task.Priority.valueOf(dto.priority()) : null);

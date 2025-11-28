@@ -30,10 +30,10 @@ public class TaskExceptionHandler {
         return buildResponse(ex.getMessage(), ex, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiErrorResponse> handleOther(Exception ex) {
-        return buildResponse("Erreur interne du serveur", ex, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<ApiErrorResponse> handleOther(Exception ex) {
+//        return buildResponse("Erreur interne du serveur", ex, HttpStatus.INTERNAL_SERVER_ERROR);
+//    }
 
     @ExceptionHandler(TaskAlreadyExist.class)
     public ResponseEntity<ApiErrorResponse> handleTaskAlreadyExist(TaskAlreadyExist ex) {

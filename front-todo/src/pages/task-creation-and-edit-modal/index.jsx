@@ -136,10 +136,8 @@ const TaskCreationAndEditModal = () => {
     setIsLoading(true);
     
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // In a real app, this would save to backend/localStorage
       console.log('Saving task:', taskData);
       
       // Show success message (in real app)
@@ -149,8 +147,6 @@ const TaskCreationAndEditModal = () => {
       navigate('/main-todo-dashboard');
     } catch (error) {
       console.error('Error saving task:', error);
-      // Show error message (in real app)
-      // toast.error('Failed to save task. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -197,15 +193,12 @@ const TaskCreationAndEditModal = () => {
           </div>
         </div>
       ) : (
-        /* Desktop Modal Layout */
         <>
-          {/* Backdrop */}
-          <div 
+          <div
             className="fixed inset-0 bg-black/50 animate-fade-in"
             onClick={handleBackdropClick}
           />
           
-          {/* Modal */}
           <div className="fixed inset-0 flex items-center justify-center p-4">
             <div 
               className="w-full max-w-2xl bg-card rounded-lg shadow-elevated animate-scale-in max-h-[90vh] overflow-hidden"

@@ -41,6 +41,9 @@ public class Task {
     private Category category;
 
     @Column
+    private Boolean completed = false;
+
+    @Column
     private LocalDate dueDate;
 
     @Column
