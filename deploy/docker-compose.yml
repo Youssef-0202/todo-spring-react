@@ -1,7 +1,10 @@
 version: '3.8'
 
 services:
-
+  my-app:
+    image: todo-app-spring-react:1.0
+    ports:
+      - "8080:8080"
   postgres-db:
     image: postgres:latest
     container_name: postgres_db
