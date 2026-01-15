@@ -1,18 +1,20 @@
-pipline {
+pipeline {
     agent any 
     tools{
         maven 'maven-3.9'
     }
-    satges {
+    stages {
         stage("test mvn"){
-            script{
-            echo "Testing MVN ..."
+            steps {
+                script{
+                    echo "Testing MVN ..."
+                }
             }
         }           
         stage("build image "){
             steps{
                 script{
-                    "docker build -t youssefaitbahssine23013/jenkins-todo-app:jma-1.2 ."
+                    sh "docker build -t youssefaitbahssine23013/jenkins-todo-app:jma-1.2 ."
                 }
             }
         }
@@ -21,7 +23,7 @@ pipline {
                 script{
                     echo "Deploying image ..."
                     withCredentials([usernamePassword   (credentialsId:'docker-hub-repo',passwordVariable:'PASS',  usernameVariable:'USER')]){
-                    sh "echo $PASS | docker login -u $USER --password-stdn" 
+                    sh "echo $PASS | docker login -u $USER --password-stdin" 
                     sh "docker push  youssefaitbahssine23013/jenkins-todo-app:jma-1.2  "
                     }
                 }
