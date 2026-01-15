@@ -80,3 +80,7 @@ pipeline {
         }
     }
 }
+
+
+// a complete piline jenkins -------------------------------------------
+
