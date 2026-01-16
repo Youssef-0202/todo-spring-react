@@ -58,6 +58,9 @@ pipeline {
                         sh 'git config --global user.email "jenkins@exemple.com"'
                         sh 'git config --global user.name "jenkins"'
 
+                        sh 'git checkout main'                 // switch to main
+                        sh 'git pull origin main'              // get latest changes
+
                         sh 'git status'
                         sh 'git branch'
                         sh 'git config --list'
@@ -65,8 +68,9 @@ pipeline {
 
                         sh 'git remote set-url origin https://${USER}:${PASS}@github.com/Youssef-0202/todo-spring-react.git'
                         sh 'git add .'
+                        
                         sh 'git commit -m "ci: version spring bump"'
-                        sh 'git push origin HEAD:refs/heads/jenkins-jobs'
+                        sh 'git push origin main'
                     }
                 }
             }
