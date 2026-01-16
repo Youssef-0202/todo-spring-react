@@ -18,7 +18,7 @@ pipeline {
                     sh "mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit "
 
                     def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
-                    def version = matcher[0][1]
+                    def version = matcher[1][1]
                     IMAGE_NAME = "$version-$BUILD_NUMBER" // just a template to versioning our images
                     echo "$IMAGE_NAME"
                 }
