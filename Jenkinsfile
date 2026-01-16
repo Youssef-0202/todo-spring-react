@@ -65,7 +65,7 @@ pipeline {
                         sh 'git remote set-url origin https://${USER}:${PASS}@github.com/Youssef-0202/todo-spring-react.git'
                         sh 'git add .'
                         sh 'git commit -m "ci: version spring bump"'
-                        sh 'git push origin HEAD:jemkins-jobs'
+                        sh 'git push origin HEAD:jenkins-jobs'
                     }
                 }
             }
