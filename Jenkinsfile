@@ -51,5 +51,24 @@ pipeline {
                 }
             }
         }   
+        stage('commit verssion update'){
+            steps{
+                script{
+                    withCredentials([usernamePassword(credentialsId:'github-credentiels',passwordVariable:'PASS',usernameVariable:'USER')]){
+                        sh 'git config --global user.email "jenkins@exemple.com"'
+                        sh 'git config --global user.name "jemnkins"'
+
+                        sh 'git status'
+                        sh 'git bransh'
+                        sh 'git config --list'
+
+                        sh 'git remote set-url origin https://${USER}:${PASS}@github.com/Youssef-0202/todo-spring-react.git'
+                        sh 'git add .'
+                        sh 'git commit -m "ci: version spring bump"'
+                        sh 'git push origin HEAD:jemkins-jobs'
+                    }
+                }
+            }
+        }
     }    
 }
