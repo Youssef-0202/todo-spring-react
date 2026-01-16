@@ -15,6 +15,8 @@ pipeline {
             steps{
                script{
                 echo "Start building mvn"
+                echo "incrementing version :"
+                sh "mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit "
                 sh "mvn clean package -DskipTests"
                }
             }
