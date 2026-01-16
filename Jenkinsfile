@@ -4,6 +4,21 @@ pipeline {
         maven 'maven-3.9'
     }
     stages {
+        stage('prevent ci loop'){
+            steps{
+                script{
+                    def msg = sh(
+                        script: "git log -1 --pretty=%B",
+                        returnStdout: true
+                    ).trim()
+                    if (msg.contains('[skip ci]') || msg.contains('[ci skip]')) {
+                        echo "CI skipped by commit message"
+                        currentBuild.result = 'SUCCESS'
+                        error("Stopping pipeline to avoid loop")
+                    }
+                }
+            }
+        }
         stage("test mvn"){
             steps {
                 script{
@@ -69,7 +84,7 @@ pipeline {
                         sh 'git remote set-url origin https://${USER}:${PASS}@github.com/Youssef-0202/todo-spring-react.git'
                         sh 'git add .'
                         
-                        sh 'git commit -m "ci: version spring bump"'
+                        sh 'git commit -m "ci: version spring bump [skip ci]"'
                         sh 'git push origin main'
                     }
                 }
