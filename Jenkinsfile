@@ -56,16 +56,17 @@ pipeline {
                 script{
                     withCredentials([usernamePassword(credentialsId:'github-credentiels',passwordVariable:'PASS',usernameVariable:'USER')]){
                         sh 'git config --global user.email "jenkins@exemple.com"'
-                        sh 'git config --global user.name "jemnkins"'
+                        sh 'git config --global user.name "jenkins"'
 
                         sh 'git status'
                         sh 'git branch'
                         sh 'git config --list'
 
+
                         sh 'git remote set-url origin https://${USER}:${PASS}@github.com/Youssef-0202/todo-spring-react.git'
                         sh 'git add .'
                         sh 'git commit -m "ci: version spring bump"'
-                        sh 'git push origin HEAD:jenkins-jobs'
+                        sh 'git push origin HEAD:refs/heads/jenkins-jobs'
                     }
                 }
             }
