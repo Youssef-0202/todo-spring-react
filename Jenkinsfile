@@ -11,15 +11,22 @@ pipeline {
                 }
             }
         }
-        stage("build mvn"){
+        stage("increment version"){
+            steps{
+                script{
+                    echo "incrementing version :"
+                    sh "mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit "
+
+                    def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
+                    def version = matcher[0][1]
+                    IMAGE_NAME = "$version-$BUILD_NUMBER" // just a template to versioning our images
+                    echo "$IMAGE_NAME"
+                }
+            }
+        }
+        stage("build app"){
             steps{
                script{
-                echo "incrementing version :"
-                sh "mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit "
-
-                def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
-                def version = matcher[0][1]
-                IMAGE_NAME = "$version-$BUILD_NUMBER" // just a template to versioning our images
                 
                 echo "Start building mvn"
                 sh "mvn clean package -DskipTests"
