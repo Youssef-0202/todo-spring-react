@@ -1,8 +1,12 @@
 pipeline {
     agent any 
-    
+
     tools{
         maven 'maven-3.9'
+    }
+
+    environment{
+        SKIP_CI = 'false'
     }
 
     stages {
@@ -14,15 +18,15 @@ pipeline {
                         returnStdout: true
                     ).trim()
 
-                    if (msg.contains('[skip ci]') || msg.contains('[ci skip]')) {
-                        echo "CI skipped by commit message"
-                        currentBuild.result = 'SUCCESS'
-                        return  
+                    if (msg.contains('[skip ci]')) {
+                        env.SKIP_CI = 'true'
+                        echo "CI skipped"
                     }
                 }
             }
         }
         stage("test mvn"){
+            when { expression { env.SKIP_CI != 'true' } }
             steps {
                 script{
                     echo "Testing MVN ..."
@@ -30,7 +34,9 @@ pipeline {
             }
         }
         stage("increment version"){
+            when { expression { env.SKIP_CI != 'true' } }
             steps{
+                
                 script{
                     echo "incrementing version :"
                     sh "mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit "
@@ -44,7 +50,8 @@ pipeline {
         }
         stage("build app"){
             steps{
-               script{
+                when { expression { env.SKIP_CI != 'true' } }
+                script{
                 
                 echo "Start building mvn"
                 sh "mvn clean package -DskipTests"
@@ -52,6 +59,7 @@ pipeline {
             }
         }          
         stage("build image "){
+            when { expression { env.SKIP_CI != 'true' } }
             steps{
                 script{
                     sh "docker build -t youssefaitbahssine23013/jenkins-todo-app:$IMAGE_NAME ."
@@ -59,6 +67,7 @@ pipeline {
             }
         }
         stage("deploy"){
+            when { expression { env.SKIP_CI != 'true' } }
             steps{
                 script{
                     echo "Deploying image ..."
@@ -70,6 +79,7 @@ pipeline {
             }
         }   
         stage('commit verssion update'){
+            when { expression { env.SKIP_CI != 'true' } }
             steps{
                 script{
                     withCredentials([usernamePassword(credentialsId:'github-credentiels',passwordVariable:'PASS',usernameVariable:'USER')]){
