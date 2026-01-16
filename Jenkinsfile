@@ -1,20 +1,23 @@
 pipeline {
     agent any 
+    
     tools{
         maven 'maven-3.9'
     }
+
     stages {
-        stage('prevent ci loop'){
-            steps{
-                script{
+        stage('prevent ci loop') {
+            steps {
+                script {
                     def msg = sh(
                         script: "git log -1 --pretty=%B",
                         returnStdout: true
                     ).trim()
+
                     if (msg.contains('[skip ci]') || msg.contains('[ci skip]')) {
                         echo "CI skipped by commit message"
                         currentBuild.result = 'SUCCESS'
-                        error("Stopping pipeline to avoid loop")
+                        return  
                     }
                 }
             }
