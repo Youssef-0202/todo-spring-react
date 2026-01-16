@@ -19,7 +19,7 @@ pipeline {
 
                 def matcher = readFile('pom.xml') =~ '<version>(.+)</version>'
                 def version = matcher[0][1]
-                IMAGE_NAME = "$version-$BUILDER_NUMBER" // just a template to versioning our images
+                IMAGE_NAME = "$version-$BUILD_NUMBER" // just a template to versioning our images
                 
                 echo "Start building mvn"
                 sh "mvn clean package -DskipTests"
