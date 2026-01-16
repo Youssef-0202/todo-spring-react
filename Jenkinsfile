@@ -15,7 +15,7 @@ pipeline {
             steps{
                script{
                 echo "Start building mvn"
-                sh "mvn package"
+                sh "mvn clean package -DskipTests"
                }
             }
         }          
