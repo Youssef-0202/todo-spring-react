@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.usef.workshop</groupId>
 	<artifactId>todo</artifactId>
-	<version>1.0.5-SNAPSHOT</version>
+	<version>1.0.6-SNAPSHOT</version>
 	<name>Todo App</name>
 	<description>Demo project for Spring Boot Todo App</description>
 	<url/>
