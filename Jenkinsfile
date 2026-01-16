@@ -10,6 +10,16 @@ pipeline {
                     echo "Testing MVN ..."
                 }
             }
+        }
+        stage("build mvn"){
+            steps{
+               script{
+                echo "Start building mvn"
+                sh "mvn package"
+               }
+            }
+        }
+
         }           
         stage("build image "){
             steps{
