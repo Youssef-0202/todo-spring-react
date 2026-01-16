@@ -1,6 +1,6 @@
 # Jenkins CI/CD Pipeline Guide 🚀
 
-This document explains the structure and principles of the Jenkins Pipeline (Jenkinsfile) implemented for the **Todo Spring React** project.
+This document explains the structure and principles of the Jenkins Pipeline (Jenkinsfile) implemented jjfor the **Todo Spring React** project.
 
 ## 1. Pipeline Structure Overview
 
