@@ -59,7 +59,7 @@ pipeline {
                         sh 'git config --global user.name "jemnkins"'
 
                         sh 'git status'
-                        sh 'git bransh'
+                        sh 'git branch'
                         sh 'git config --list'
 
                         sh 'git remote set-url origin https://${USER}:${PASS}@github.com/Youssef-0202/todo-spring-react.git'
