@@ -11,11 +11,11 @@ import java.util.UUID;
 /**
  * @author HP
  **/
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "tasks")
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class Task {
     @Id
